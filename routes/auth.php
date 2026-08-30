@@ -29,6 +29,12 @@ Route::middleware('guest')->group(function () {
     Route::get('auth/google/callback', [GoogleAuthController::class, 'callback'])
         ->name('auth.google.callback');
 
+    Route::get('auth/google/mock', [GoogleAuthController::class, 'mockView'])
+        ->name('auth.google.mock-view');
+
+    Route::post('auth/google/mock', [GoogleAuthController::class, 'mockLogin'])
+        ->name('auth.google.mock-login');
+
     Route::get('forgot-password', [PasswordResetLinkController::class, 'create'])
         ->name('password.request');
 

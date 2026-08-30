@@ -158,6 +158,16 @@
                 <p class="text-xs text-slate-500 leading-relaxed max-w-md">
                     Platform lowongan kerja terdepan khusus area Semarang dan sekitarnya. Menyajikan informasi karir paling hangat, terpercaya, dan mudah diakses untuk semua jenjang karir.
                 </p>
+                <div class="space-y-2 pt-1">
+                    <p class="text-xs font-semibold text-slate-700 flex items-center gap-2">
+                        <span>📸 Instagram:</span>
+                        <a href="https://instagram.com/infolokerpanas.semarang" target="_blank" class="text-orange-500 hover:underline">@infolokerpanas.semarang</a>
+                    </p>
+                    <p class="text-xs font-semibold text-slate-700 flex items-center gap-2">
+                        <span>💬 Pasang Loker:</span>
+                        <a href="https://wa.me/6287760282511" target="_blank" class="text-orange-500 hover:underline">+62 877-6028-2511</a>
+                    </p>
+                </div>
             </div>
             <div>
                 <h4 class="font-display text-xs font-extrabold uppercase tracking-wider text-slate-900 mb-4">Navigasi Utama</h4>

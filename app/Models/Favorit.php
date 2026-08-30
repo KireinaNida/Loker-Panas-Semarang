@@ -17,17 +17,11 @@ class Favorit extends Model
         'lowongan_id',
     ];
 
-    /**
-     * Relasi ke User
-     */
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
     }
 
-    /**
-     * Relasi ke Lowongan
-     */
     public function lowongan(): BelongsTo
     {
         return $this->belongsTo(Lowongan::class);

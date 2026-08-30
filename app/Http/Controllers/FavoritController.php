@@ -44,11 +44,11 @@ class FavoritController extends Controller
             'lowongan_id' => $request->lowongan_id,
         ]);
 
-        return back()->with('success', 'Lowongan berhasil disimpan ke daftar favorit ❤️');
+        return back()->with('success', 'Lowongan berhasil disimpan ke daftar favorit');
     }
 
     /**
-     * Hapus lowongan dari daftar favorit
+     * Hapus lowongan dari daftar favorit (milik user sendiri)
      */
     public function destroy($id)
     {
@@ -56,5 +56,27 @@ class FavoritController extends Controller
         $favorit->delete();
 
         return back()->with('success', 'Lowongan berhasil dihapus dari favorit.');
+    }
+
+    /**
+     * [ADMIN] Tampilkan semua data favorit dari seluruh user
+     */
+    public function adminIndex()
+    {
+        $favorit = Favorit::with(['user', 'lowongan'])
+            ->latest()
+            ->paginate(15);
+
+        return view('admin.favorit.index', compact('favorit'));
+    }
+
+    /**
+     * [ADMIN] Hapus data favorit milik user manapun
+     */
+    public function adminDestroy(Favorit $favorit)
+    {
+        $favorit->delete();
+
+        return redirect()->route('admin.favorit.index')->with('success', 'Favorit berhasil dihapus.');
     }
 }

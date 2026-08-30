@@ -7,7 +7,7 @@
 @section('content')
 
     <!-- STATS -->
-    <div class="grid grid-cols-2 lg:grid-cols-4 gap-4">
+    <div class="grid grid-cols-2 lg:grid-cols-5 gap-4">
         <div class="bg-white p-5 rounded-2xl border border-slate-200/80 shadow-sm">
             <div class="flex items-center justify-between mb-3">
                 <span class="text-xs text-slate-500">Total Lowongan</span>
@@ -46,6 +46,16 @@
                 </div>
             </div>
             <p class="text-2xl font-bold text-slate-900">{{ $totalKlikLamar }}</p>
+        </div>
+
+        <div class="bg-white p-5 rounded-2xl border border-slate-200/80 shadow-sm">
+            <div class="flex items-center justify-between mb-3">
+                <span class="text-xs text-slate-500">Total Favorit</span>
+                <div class="w-9 h-9 rounded-lg bg-rose-50 border border-rose-200 flex items-center justify-center text-rose-500">
+                    <svg class="icon w-4 h-4"><use href="#icon-heart"/></svg>
+                </div>
+            </div>
+            <p class="text-2xl font-bold text-slate-900">{{ $totalFavorit }}</p>
         </div>
     </div>
 
@@ -98,5 +108,6 @@
             </table>
         </div>
     </div>
+
 
 @endsection

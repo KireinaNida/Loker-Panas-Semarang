@@ -8,12 +8,13 @@
     @vite(['resources/css/app.css', 'resources/js/app.js'])
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
-    
-        <style>
+
+    <style>
         .icon { width: 1em; height: 1em; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; display: inline-block; vertical-align: middle; }
         .icon-fill { fill: currentColor; }
         .nav-link.active { background: rgba(249, 115, 22, 0.08); border: 1px solid rgba(249, 115, 22, 0.35); color: #c2410c; }
         *:focus-visible { outline: 2px solid #3b82f6 !important; outline-offset: 2px !important; }
+        [x-cloak] { display: none !important; }
     </style>
 </head>
 <body class="font-sans antialiased bg-slate-50 text-slate-800 min-h-screen">
@@ -39,20 +40,44 @@
         <symbol id="icon-pin" viewBox="0 0 24 24"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/><circle cx="12" cy="10" r="3"/></symbol>
         <symbol id="icon-folder" viewBox="0 0 24 24"><path d="M4 4h6l2 3h8a1 1 0 0 1 1 1v11a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V5a1 1 0 0 1 1-1Z"/></symbol>
         <symbol id="icon-click" viewBox="0 0 24 24"><path d="m9 9 5 12 1.8-5.2L21 14Z"/><path d="M7.2 2.2 8 5.1M2.2 7.2 5.1 8M2 13l1-2.5 2.5-1"/></symbol>
+        <symbol id="icon-heart" viewBox="0 0 24 24"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></symbol>
+        <symbol id="icon-star" viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></symbol>
+        <symbol id="icon-x" viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></symbol>
     </svg>
 
-    <div class="flex min-h-screen">
+    <div class="flex min-h-screen" x-data="{ sidebarOpen: false }">
+
+        <!-- Mobile Sidebar Backdrop Overlay -->
+        <div x-show="sidebarOpen" 
+             x-transition:enter="transition ease-out duration-300"
+             x-transition:enter-start="opacity-0"
+             x-transition:enter-end="opacity-100"
+             x-transition:leave="transition ease-in duration-200"
+             x-transition:leave-start="opacity-100"
+             x-transition:leave-end="opacity-0"
+             class="fixed inset-0 bg-slate-900/40 backdrop-blur-sm z-30 lg:hidden"
+             @click="sidebarOpen = false"
+             x-cloak>
+        </div>
 
         <!-- SIDEBAR -->
-        <aside id="sidebar" class="w-64 shrink-0 bg-white border-r border-slate-200 flex-col justify-between hidden lg:flex lg:sticky top-0 h-screen z-40">
+        <aside id="sidebar" 
+               :class="sidebarOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'"
+               class="w-64 shrink-0 bg-white border-r border-slate-200 flex-col justify-between fixed lg:sticky top-0 left-0 h-screen z-40 transition-transform duration-300 ease-in-out flex shadow-lg lg:shadow-none"
+               x-cloak>
             <div>
-                <a href="{{ route('beranda') }}" class="h-20 flex items-center gap-3 px-6 border-b border-slate-200">
-                    <div class="w-10 h-10 bg-gradient-to-tr from-orange-400 to-blue-500 rounded-xl flex items-center justify-center font-extrabold text-xl text-white shadow-lg shadow-orange-400/20">I</div>
-                    <div>
-                        <span class="text-lg font-bold tracking-tight text-slate-900">Info Loker<span class="text-orange-500"> Panas</span></span>
-                        <span class="block text-[10px] text-slate-500 -mt-1 tracking-widest uppercase">Admin Panel</span>
-                    </div>
-                </a>
+                <div class="h-20 flex items-center justify-between px-6 border-b border-slate-200">
+                    <a href="{{ route('beranda') }}" class="flex items-center gap-3">
+                        <div class="w-10 h-10 bg-gradient-to-tr from-orange-400 to-blue-500 rounded-xl flex items-center justify-center font-extrabold text-xl text-white shadow-lg shadow-orange-400/20">I</div>
+                        <div>
+                            <span class="text-lg font-bold tracking-tight text-slate-900">Info Loker<span class="text-orange-500"> Panas</span></span>
+                            <span class="block text-[10px] text-slate-500 -mt-1 tracking-widest uppercase">Admin Panel</span>
+                        </div>
+                    </a>
+                    <button class="lg:hidden p-1.5 rounded-lg hover:bg-slate-100 text-slate-400 hover:text-slate-600" @click="sidebarOpen = false" aria-label="Close sidebar">
+                        <svg class="icon w-5 h-5"><use href="#icon-x"/></svg>
+                    </button>
+                </div>
 
                 <nav class="p-4 space-y-1.5">
                     <a href="{{ route('admin.dashboard') }}" class="nav-link {{ request()->routeIs('admin.dashboard') ? 'active' : '' }} flex items-center gap-3 px-4 py-2.5 rounded-xl text-sm font-medium {{ request()->routeIs('admin.dashboard') ? '' : 'text-slate-500 hover:bg-slate-100 hover:text-slate-900' }} transition">
@@ -63,6 +88,12 @@
                     </a>
                     <a href="{{ route('admin.kategori.index') }}" class="nav-link {{ request()->routeIs('admin.kategori.*') ? 'active' : '' }} flex items-center gap-3 px-4 py-2.5 rounded-xl text-sm font-medium {{ request()->routeIs('admin.kategori.*') ? '' : 'text-slate-500 hover:bg-slate-100 hover:text-slate-900' }} transition">
                         <svg class="icon w-[18px] h-[18px]"><use href="#icon-tag"/></svg> Kategori
+                    </a>
+                    <a href="{{ route('admin.favorit.index') }}" class="nav-link {{ request()->routeIs('admin.favorit.*') ? 'active' : '' }} flex items-center gap-3 px-4 py-2.5 rounded-xl text-sm font-medium {{ request()->routeIs('admin.favorit.*') ? '' : 'text-slate-500 hover:bg-slate-100 hover:text-slate-900' }} transition">
+                        <svg class="icon w-[18px] h-[18px]"><use href="#icon-heart"/></svg> Favorit
+                    </a>
+                    <a href="{{ route('admin.review.index') }}" class="nav-link {{ request()->routeIs('admin.review.*') ? 'active' : '' }} flex items-center gap-3 px-4 py-2.5 rounded-xl text-sm font-medium {{ request()->routeIs('admin.review.*') ? '' : 'text-slate-500 hover:bg-slate-100 hover:text-slate-900' }} transition">
+                        <svg class="icon w-[18px] h-[18px]"><use href="#icon-star"/></svg> Review
                     </a>
                     <a href="{{ route('beranda') }}" class="nav-link flex items-center gap-3 px-4 py-2.5 rounded-xl text-sm font-medium text-slate-500 hover:bg-slate-100 hover:text-slate-900 transition">
                         <svg class="icon w-[18px] h-[18px]"><use href="#icon-home"/></svg> Lihat Situs
@@ -89,13 +120,14 @@
             </div>
         </aside>
 
-            <!-- MAIN -->
-            <div class="flex-1 min-w-0" x-data="@yield('page-data', '{}')"></div></div>
+        <!-- MAIN -->
+        <div class="flex-1 min-w-0" x-data="@yield('page-data', '{}')">
+
             <!-- TOPBAR -->
             <header class="bg-white/90 backdrop-blur sticky top-0 z-30 border-b border-slate-200">
                 <div class="h-20 flex items-center justify-between px-6 gap-4">
                     <div class="flex items-center gap-3">
-                        <button class="lg:hidden p-2 rounded-lg hover:bg-slate-100 text-slate-600" onclick="document.getElementById('sidebar').classList.toggle('hidden'); document.getElementById('sidebar').classList.toggle('flex')">
+                        <button class="lg:hidden p-2 rounded-lg hover:bg-slate-100 text-slate-600" @click="sidebarOpen = true" aria-label="Open sidebar">
                             <svg class="icon w-5 h-5"><use href="#icon-grid"/></svg>
                         </button>
                         <div>
@@ -123,6 +155,7 @@
             <main class="p-6 space-y-6">
                 @yield('content')
             </main>
+
         </div>
     </div>
 

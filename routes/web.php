@@ -2,8 +2,8 @@
 
 use App\Http\Controllers\Admin\LowonganController as AdminLowonganController;
 use App\Http\Controllers\Admin\DashboardController as AdminDashboardController;
-use App\Http\Controllers\LamaranController;
 use App\Http\Controllers\Admin\KategoriController;
+use App\Http\Controllers\LamaranController;
 use App\Http\Controllers\LowonganController;
 use App\Http\Controllers\FavoritController;
 use App\Http\Controllers\ReviewController;
@@ -39,11 +39,18 @@ Route::middleware('auth')->group(function () {
     Route::get('/lamar/{id}/cepat', [LamaranController::class, 'lamarCepat'])->name('lamaran.cepat');
 });
 
-// Grup khusus admin — inilah yang kemarin hilang
+// Grup khusus admin
 Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(function () {
     Route::get('/dashboard', [AdminDashboardController::class, 'index'])->name('dashboard');
     Route::resource('kategori', KategoriController::class);
     Route::resource('lowongan', AdminLowonganController::class);
+
+    Route::get('/favorit', [FavoritController::class, 'adminIndex'])->name('favorit.index');
+    Route::delete('/favorit/{favorit}', [FavoritController::class, 'adminDestroy'])->name('favorit.destroy');
+
+    Route::get('/review', [ReviewController::class, 'index'])->name('review.index');
+    Route::put('/review/{review}/balas', [ReviewController::class, 'balas'])->name('review.balas');
+    Route::delete('/review/{review}', [ReviewController::class, 'destroy'])->name('review.destroy');
 });
 
 require __DIR__.'/auth.php';

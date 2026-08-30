@@ -24,12 +24,12 @@
                 <div class="sm:col-span-6 relative">
                     <input type="text" name="q" placeholder="Cari posisi atau perusahaan..." value="{{ request('q') }}" 
                            class="w-full pl-10 pr-4 py-3 rounded-xl border border-slate-200 bg-slate-50 focus:bg-white focus:border-orange-500/50 focus:ring-2 focus:ring-orange-400/20 text-xs sm:text-sm text-slate-800 placeholder-slate-400 outline-none transition-all">
-                    <span class="absolute left-3.5 top-1/2 -translate-y-1/2 text-sm text-slate-400">🔍</span>
+                    <svg class="icon absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400"><use href="#icon-search"/></svg>
                 </div>
                 <div class="sm:col-span-4 relative">
                     <input type="text" name="lokasi" placeholder="Lokasi (Semarang)" value="{{ request('lokasi') }}" 
                            class="w-full pl-10 pr-4 py-3 rounded-xl border border-slate-200 bg-slate-50 focus:bg-white focus:border-orange-500/50 focus:ring-2 focus:ring-orange-400/20 text-xs sm:text-sm text-slate-800 placeholder-slate-400 outline-none transition-all">
-                    <span class="absolute left-3.5 top-1/2 -translate-y-1/2 text-sm text-slate-400">📍</span>
+                    <svg class="icon absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400"><use href="#icon-pin"/></svg>
                 </div>
                 <div class="sm:col-span-2">
                     <button type="submit" class="w-full py-3 px-4 bg-orange-400 hover:bg-orange-500 text-white rounded-xl font-bold text-xs sm:text-sm transition shadow-lg shadow-orange-400/25 active:scale-[0.98]">
@@ -42,41 +42,111 @@
         <div class="grid grid-cols-1 lg:grid-cols-4 gap-8">
             <!-- Left Sidebar Filter (1 col) -->
             <aside class="space-y-4 lg:col-span-1">
-                <div class="glass-card p-5 rounded-2xl space-y-4 shadow-sm border border-slate-200/80">
+                <div class="glass-card p-5 rounded-2xl space-y-5 shadow-sm border border-slate-200/80">
                     <h3 class="font-bold text-slate-900 text-sm border-b border-slate-200 pb-3">Filter Lowongan</h3>
                     
-                    <form action="{{ route('lowongan.index') }}" method="GET" id="sidebarFilterForm" class="space-y-4">
+                    <form action="{{ route('lowongan.index') }}" method="GET" id="sidebarFilterForm" class="space-y-5">
                         @if(request('q')) <input type="hidden" name="q" value="{{ request('q') }}"> @endif
                         @if(request('lokasi')) <input type="hidden" name="lokasi" value="{{ request('lokasi') }}"> @endif
 
-                        <div>
-                            <label for="kategori_id" class="text-xs text-slate-500 block mb-2">Kategori</label>
-                            <select id="kategori_id" name="kategori_id" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-xs text-slate-700 focus:outline-none focus:border-orange-500/50" onchange="this.form.submit()">
-                                <option value="">Semua Kategori</option>
+                        <!-- KATEGORI FILTER (Custom Dropdown) -->
+                        <div x-data="{ open: false, selectedLabel: '{{ request('kategori_id') && $kategoriList->firstWhere('id', request('kategori_id')) ? addslashes($kategoriList->firstWhere('id', request('kategori_id'))->nama_kategori) : 'Semua Kategori' }}' }" class="relative">
+                            <label class="text-[10px] font-extrabold uppercase tracking-widest text-slate-400 block mb-2.5">Kategori</label>
+                            <input type="hidden" name="kategori_id" id="sidebar_kategori_id" value="{{ request('kategori_id') }}">
+                            
+                            <!-- Dropdown Trigger Button -->
+                            <button type="button" 
+                                    @click="open = !open" 
+                                    @click.away="open = false"
+                                    class="w-full flex items-center justify-between bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-xs font-semibold text-slate-700 hover:bg-white hover:border-orange-500/50 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-orange-400/20 active:scale-[0.99] text-left">
+                                <span class="truncate" x-text="selectedLabel">Semua Kategori</span>
+                                <svg class="w-4 h-4 text-slate-400 transition-transform duration-200 shrink-0" :class="{'rotate-180': open}" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+                                </svg>
+                            </button>
+
+                            <!-- Dropdown Menu Options -->
+                            <div x-show="open" 
+                                 x-transition:enter="transition ease-out duration-100"
+                                 x-transition:enter-start="transform opacity-0 scale-95"
+                                 x-transition:enter-end="transform opacity-100 scale-100"
+                                 x-transition:leave="transition ease-in duration-75"
+                                 x-transition:leave-start="transform opacity-100 scale-100"
+                                 x-transition:leave-end="transform opacity-0 scale-95"
+                                 class="absolute z-30 mt-1.5 w-full bg-white border border-slate-200/80 rounded-xl shadow-xl py-1 max-h-60 overflow-y-auto scrollbar-thin focus:outline-none"
+                                 style="display: none;">
+                                
+                                <!-- Option: Semua Kategori -->
+                                <button type="button" 
+                                        @click="selectedLabel = 'Semua Kategori'; document.getElementById('sidebar_kategori_id').value = ''; open = false; $nextTick(() => $el.closest('form').submit());"
+                                        class="w-full text-left px-4 py-2.5 text-xs font-semibold flex items-center justify-between transition-all duration-150 {{ !request('kategori_id') ? 'bg-orange-50 text-orange-600 font-bold' : 'text-slate-600 hover:bg-slate-50 hover:text-slate-900' }}">
+                                    <span>Semua Kategori</span>
+                                    @if(!request('kategori_id'))
+                                        <svg class="w-3.5 h-3.5 text-orange-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/></svg>
+                                    @endif
+                                </button>
+
+                                <!-- Options: Categories -->
                                 @foreach($kategoriList as $k)
-                                    <option value="{{ $k->id }}" {{ request('kategori_id') == $k->id ? 'selected' : '' }}>{{ $k->nama_kategori }}</option>
+                                    @php
+                                        $isActive = request('kategori_id') == $k->id;
+                                    @endphp
+                                    <button type="button" 
+                                            @click="selectedLabel = '{{ addslashes($k->nama_kategori) }}'; document.getElementById('sidebar_kategori_id').value = '{{ $k->id }}'; open = false; $nextTick(() => $el.closest('form').submit());"
+                                            class="w-full text-left px-4 py-2.5 text-xs font-semibold flex items-center justify-between transition-all duration-150 {{ $isActive ? 'bg-orange-50 text-orange-600 font-bold' : 'text-slate-600 hover:bg-slate-50 hover:text-slate-900' }}">
+                                        <span class="truncate">{{ $k->nama_kategori }}</span>
+                                        @if($isActive)
+                                            <svg class="w-3.5 h-3.5 text-orange-500 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/></svg>
+                                        @endif
+                                    </button>
                                 @endforeach
-                            </select>
+                            </div>
                         </div>
 
+                        <!-- PENDIDIKAN FILTER -->
                         <div>
-                            <label for="tingkat_pendidikan" class="text-xs text-slate-500 block mb-2">Pendidikan</label>
-                            <select id="tingkat_pendidikan" name="tingkat_pendidikan" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-xs text-slate-700 focus:outline-none focus:border-orange-500/50" onchange="this.form.submit()">
-                                <option value="">Semua Jenjang</option>
-                                @foreach(['SMA/SMK', 'D3', 'D4', 'S1', 'S2', 'Semua Jenjang'] as $opt)
-                                    <option value="{{ $opt }}" {{ request('tingkat_pendidikan') == $opt ? 'selected' : '' }}>{{ $opt }}</option>
+                            <label class="text-[10px] font-extrabold uppercase tracking-widest text-slate-400 block mb-2.5">Pendidikan</label>
+                            <input type="hidden" name="tingkat_pendidikan" id="sidebar_tingkat_pendidikan" value="{{ request('tingkat_pendidikan') }}">
+                            <div class="flex flex-wrap gap-1.5">
+                                <button type="button" 
+                                        onclick="document.getElementById('sidebar_tingkat_pendidikan').value = ''; this.closest('form').submit();"
+                                        class="px-2.5 py-1.5 rounded-lg text-[10px] sm:text-[11px] font-bold border transition-all duration-200 active:scale-[0.98] {{ !request('tingkat_pendidikan') ? 'bg-orange-400 border-orange-400 text-white shadow-sm' : 'bg-slate-50 border-slate-200 text-slate-600 hover:bg-slate-100 hover:text-slate-800' }}">
+                                    Semua Jenjang
+                                </button>
+                                @foreach(['SMA/SMK', 'D3', 'D4', 'S1', 'S2'] as $opt)
+                                    @php
+                                        $isActive = request('tingkat_pendidikan') == $opt;
+                                    @endphp
+                                    <button type="button" 
+                                            onclick="document.getElementById('sidebar_tingkat_pendidikan').value = '{{ $opt }}'; this.closest('form').submit();"
+                                            class="px-2.5 py-1.5 rounded-lg text-[10px] sm:text-[11px] font-bold border transition-all duration-200 active:scale-[0.98] {{ $isActive ? 'bg-orange-400 border-orange-400 text-white shadow-sm' : 'bg-slate-50 border-slate-200 text-slate-600 hover:bg-slate-100 hover:text-slate-800' }}">
+                                        {{ $opt }}
+                                    </button>
                                 @endforeach
-                            </select>
+                            </div>
                         </div>
 
+                        <!-- TIPE PEKERJAAN FILTER -->
                         <div>
-                            <label for="tipe_pekerjaan" class="text-xs text-slate-500 block mb-2">Tipe Pekerjaan</label>
-                            <select id="tipe_pekerjaan" name="tipe_pekerjaan" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-xs text-slate-700 focus:outline-none focus:border-orange-500/50" onchange="this.form.submit()">
-                                <option value="">Semua Tipe</option>
+                            <label class="text-[10px] font-extrabold uppercase tracking-widest text-slate-400 block mb-2.5">Tipe Pekerjaan</label>
+                            <input type="hidden" name="tipe_pekerjaan" id="sidebar_tipe_pekerjaan" value="{{ request('tipe_pekerjaan') }}">
+                            <div class="flex flex-wrap gap-1.5">
+                                <button type="button" 
+                                        onclick="document.getElementById('sidebar_tipe_pekerjaan').value = ''; this.closest('form').submit();"
+                                        class="px-2.5 py-1.5 rounded-lg text-[10px] sm:text-[11px] font-bold border transition-all duration-200 active:scale-[0.98] {{ !request('tipe_pekerjaan') ? 'bg-orange-400 border-orange-400 text-white shadow-sm' : 'bg-slate-50 border-slate-200 text-slate-600 hover:bg-slate-100 hover:text-slate-800' }}">
+                                    Semua Tipe
+                                </button>
                                 @foreach(['Full Time', 'Part Time', 'Kontrak', 'Magang', 'Freelance'] as $opt)
-                                    <option value="{{ $opt }}" {{ request('tipe_pekerjaan') == $opt ? 'selected' : '' }}>{{ $opt }}</option>
+                                    @php
+                                        $isActive = request('tipe_pekerjaan') == $opt;
+                                    @endphp
+                                    <button type="button" 
+                                            onclick="document.getElementById('sidebar_tipe_pekerjaan').value = '{{ $opt }}'; this.closest('form').submit();"
+                                            class="px-2.5 py-1.5 rounded-lg text-[10px] sm:text-[11px] font-bold border transition-all duration-200 active:scale-[0.98] {{ $isActive ? 'bg-orange-400 border-orange-400 text-white shadow-sm' : 'bg-slate-50 border-slate-200 text-slate-600 hover:bg-slate-100 hover:text-slate-800' }}">
+                                        {{ $opt }}
+                                    </button>
                                 @endforeach
-                            </select>
+                            </div>
                         </div>
 
                         @if(request()->anyFilled(['q', 'lokasi', 'kategori_id', 'tingkat_pendidikan', 'tipe_pekerjaan']))

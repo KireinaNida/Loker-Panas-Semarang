@@ -13,25 +13,31 @@ class Review extends Model
     protected $table = 'review';
 
     protected $fillable = [
-        'lowongan_id',
         'user_id',
+        'lowongan_id',
         'rating',
         'komentar',
+        'balasan',
+        'dibalas_at',
     ];
 
-    /**
-     * Relasi ke Lowongan
-     */
+    protected $casts = [
+        'rating' => 'integer',
+        'dibalas_at' => 'datetime',
+    ];
+
+    public function user(): BelongsTo
+    {
+        return $this->belongsTo(User::class);
+    }
+
     public function lowongan(): BelongsTo
     {
         return $this->belongsTo(Lowongan::class);
     }
 
-    /**
-     * Relasi ke User
-     */
-    public function user(): BelongsTo
+    public function sudahDibalas(): bool
     {
-        return $this->belongsTo(User::class);
+        return ! is_null($this->balasan);
     }
 }
