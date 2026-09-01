@@ -13,7 +13,7 @@
              optionalDocs: [],
              
              get allMandatoryFilled() {
-                 return this.cvSelected && this.ktpSelected && this.ijazahSelected && this.fotoSelected;
+                 return this.cvSelected && this.ijazahSelected && this.fotoSelected;
              },
              
              addDoc() {
@@ -122,15 +122,15 @@
                 </div>
             </div>
 
-            <!-- 2. Dokumen Wajib (Mandatory Files) -->
+            <!-- 2. Dokumen Wajib (Mandatory Files: CV, Ijazah, Foto) -->
             <div class="bg-white rounded-3xl p-6 sm:p-7 shadow-sm border border-slate-200/80 space-y-5">
                 <div class="pb-3 border-b border-slate-100">
                     <span class="text-[10px] font-extrabold uppercase tracking-widest text-orange-500 block">Bagian 2 (Wajib)</span>
                     <h2 class="font-display text-base font-extrabold text-slate-900">Unggah Berkas Persyaratan Wajib</h2>
-                    <p class="text-xs text-slate-500 mt-0.5">Seluruh 4 dokumen di bawah ini wajib dilampirkan sebelum mengirim lamaran.</p>
+                    <p class="text-xs text-slate-500 mt-0.5">3 dokumen wajib di bawah ini harus dilampirkan sebelum mengirim lamaran.</p>
                 </div>
 
-                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
                     <!-- CV Wajib (PDF) -->
                     <div class="p-4 rounded-2xl border-2 transition-all" 
                          :class="cvSelected ? 'border-emerald-500 bg-emerald-50/40' : 'border-dashed border-slate-200 bg-slate-50 hover:bg-slate-100/70'">
@@ -139,39 +139,17 @@
                                 <span class="w-2 h-2 rounded-full bg-rose-500"></span>
                                 <span>Curriculum Vitae (CV)</span>
                             </label>
-                            <span class="text-[10px] font-extrabold px-2 py-0.5 rounded bg-slate-200 text-slate-700 uppercase">PDF (Maks 5MB)</span>
                         </div>
+                        <span class="text-[10px] font-extrabold px-2 py-0.5 rounded bg-slate-200 text-slate-700 uppercase inline-block mb-2">PDF (Maks 5MB)</span>
                         <input type="file" 
                                name="dokumen_cv" 
                                accept="application/pdf" 
                                @change="cvSelected = $event.target.files.length > 0"
-                               class="block w-full text-xs text-slate-500 file:mr-3 file:py-2 file:px-3.5 file:rounded-xl file:border-0 file:text-xs file:font-bold file:bg-orange-400 file:text-white hover:file:bg-orange-500 file:cursor-pointer"
+                               class="block w-full text-xs text-slate-500 file:mr-2 file:py-1.5 file:px-3 file:rounded-xl file:border-0 file:text-xs file:font-bold file:bg-orange-400 file:text-white hover:file:bg-orange-500 file:cursor-pointer"
                                required>
                         <p class="text-[10px] text-slate-400 mt-2" x-show="!cvSelected">Unggah CV terbaru Anda dalam bentuk PDF.</p>
                         <p class="text-[10px] text-emerald-600 font-bold mt-2 flex items-center gap-1" x-show="cvSelected">
-                            <span>✓</span> Berkas CV siap dikirim
-                        </p>
-                    </div>
-
-                    <!-- KTP Wajib -->
-                    <div class="p-4 rounded-2xl border-2 transition-all" 
-                         :class="ktpSelected ? 'border-emerald-500 bg-emerald-50/40' : 'border-dashed border-slate-200 bg-slate-50 hover:bg-slate-100/70'">
-                        <div class="flex items-center justify-between mb-2">
-                            <label class="font-bold text-xs text-slate-800 flex items-center gap-1.5">
-                                <span class="w-2 h-2 rounded-full bg-rose-500"></span>
-                                <span>Kartu Tanda Penduduk (KTP)</span>
-                            </label>
-                            <span class="text-[10px] font-extrabold px-2 py-0.5 rounded bg-slate-200 text-slate-700 uppercase">PDF/Foto (Maks 3MB)</span>
-                        </div>
-                        <input type="file" 
-                               name="dokumen_ktp" 
-                               accept=".pdf,image/png,image/jpeg,image/jpg" 
-                               @change="ktpSelected = $event.target.files.length > 0"
-                               class="block w-full text-xs text-slate-500 file:mr-3 file:py-2 file:px-3.5 file:rounded-xl file:border-0 file:text-xs file:font-bold file:bg-orange-400 file:text-white hover:file:bg-orange-500 file:cursor-pointer"
-                               required>
-                        <p class="text-[10px] text-slate-400 mt-2" x-show="!ktpSelected">Foto atau scan KTP yang jelas dan terbaca.</p>
-                        <p class="text-[10px] text-emerald-600 font-bold mt-2 flex items-center gap-1" x-show="ktpSelected">
-                            <span>✓</span> Berkas KTP siap dikirim
+                            <span>✓</span> CV siap dikirim
                         </p>
                     </div>
 
@@ -183,17 +161,17 @@
                                 <span class="w-2 h-2 rounded-full bg-rose-500"></span>
                                 <span>Ijazah / SKL Terakhir</span>
                             </label>
-                            <span class="text-[10px] font-extrabold px-2 py-0.5 rounded bg-slate-200 text-slate-700 uppercase">PDF/Foto (Maks 5MB)</span>
                         </div>
+                        <span class="text-[10px] font-extrabold px-2 py-0.5 rounded bg-slate-200 text-slate-700 uppercase inline-block mb-2">PDF/Foto (Maks 5MB)</span>
                         <input type="file" 
                                name="dokumen_ijazah" 
                                accept=".pdf,image/png,image/jpeg,image/jpg" 
                                @change="ijazahSelected = $event.target.files.length > 0"
-                               class="block w-full text-xs text-slate-500 file:mr-3 file:py-2 file:px-3.5 file:rounded-xl file:border-0 file:text-xs file:font-bold file:bg-orange-400 file:text-white hover:file:bg-orange-500 file:cursor-pointer"
+                               class="block w-full text-xs text-slate-500 file:mr-2 file:py-1.5 file:px-3 file:rounded-xl file:border-0 file:text-xs file:font-bold file:bg-orange-400 file:text-white hover:file:bg-orange-500 file:cursor-pointer"
                                required>
                         <p class="text-[10px] text-slate-400 mt-2" x-show="!ijazahSelected">Ijazah pendidikan terakhir sesuai kualifikasi.</p>
                         <p class="text-[10px] text-emerald-600 font-bold mt-2 flex items-center gap-1" x-show="ijazahSelected">
-                            <span>✓</span> Berkas Ijazah siap dikirim
+                            <span>✓</span> Ijazah siap dikirim
                         </p>
                     </div>
 
@@ -205,13 +183,13 @@
                                 <span class="w-2 h-2 rounded-full bg-rose-500"></span>
                                 <span>Pas Foto Formal</span>
                             </label>
-                            <span class="text-[10px] font-extrabold px-2 py-0.5 rounded bg-slate-200 text-slate-700 uppercase">Foto (Maks 3MB)</span>
                         </div>
+                        <span class="text-[10px] font-extrabold px-2 py-0.5 rounded bg-slate-200 text-slate-700 uppercase inline-block mb-2">Foto (Maks 3MB)</span>
                         <input type="file" 
                                name="dokumen_foto" 
                                accept="image/png,image/jpeg,image/jpg" 
                                @change="fotoSelected = $event.target.files.length > 0"
-                               class="block w-full text-xs text-slate-500 file:mr-3 file:py-2 file:px-3.5 file:rounded-xl file:border-0 file:text-xs file:font-bold file:bg-orange-400 file:text-white hover:file:bg-orange-500 file:cursor-pointer"
+                               class="block w-full text-xs text-slate-500 file:mr-2 file:py-1.5 file:px-3 file:rounded-xl file:border-0 file:text-xs file:font-bold file:bg-orange-400 file:text-white hover:file:bg-orange-500 file:cursor-pointer"
                                required>
                         <p class="text-[10px] text-slate-400 mt-2" x-show="!fotoSelected">Pas foto rapi (latar belakang bebas/formal).</p>
                         <p class="text-[10px] text-emerald-600 font-bold mt-2 flex items-center gap-1" x-show="fotoSelected">
@@ -221,13 +199,13 @@
                 </div>
             </div>
 
-            <!-- 3. Dokumen Tambahan (Opsional & Dinamis) -->
+            <!-- 3. Dokumen Pendukung & Opsional (Termasuk KTP) -->
             <div class="bg-white rounded-3xl p-6 sm:p-7 shadow-sm border border-slate-200/80 space-y-4">
                 <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 pb-3 border-b border-slate-100">
                     <div>
                         <span class="text-[10px] font-extrabold uppercase tracking-widest text-slate-400 block">Bagian 3 (Opsional)</span>
                         <h2 class="font-display text-base font-extrabold text-slate-900">Dokumen Pendukung Tambahan</h2>
-                        <p class="text-xs text-slate-500 mt-0.5">Contoh: Kartu Keluarga (KK), Sertifikat Keahlian, Portofolio, SKCK, Surat Pengalaman Kerja.</p>
+                        <p class="text-xs text-slate-500 mt-0.5">KTP, Kartu Keluarga (KK), Sertifikat Keahlian, Portofolio, SKCK, atau Surat Pengalaman Kerja.</p>
                     </div>
 
                     <button type="button" 
@@ -235,6 +213,26 @@
                             class="px-4 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-800 text-xs font-bold transition flex items-center gap-1.5 self-start cursor-pointer">
                         <span>+</span> Tambah Berkas Lain
                     </button>
+                </div>
+
+                <!-- KTP Card (Opsional) -->
+                <div class="p-4 rounded-2xl border transition-all"
+                     :class="ktpSelected ? 'border-emerald-500 bg-emerald-50/40' : 'border-slate-200 bg-slate-50/60'">
+                    <div class="flex items-center justify-between mb-2">
+                        <label class="font-bold text-xs text-slate-800 flex items-center gap-1.5">
+                            <span>Kartu Tanda Penduduk (KTP)</span>
+                            <span class="text-[10px] text-slate-400 font-normal">(Opsional / Tidak Wajib)</span>
+                        </label>
+                        <span class="text-[10px] font-extrabold px-2 py-0.5 rounded bg-slate-200 text-slate-700 uppercase">PDF/Foto (Maks 3MB)</span>
+                    </div>
+                    <input type="file" 
+                           name="dokumen_ktp" 
+                           accept=".pdf,image/png,image/jpeg,image/jpg" 
+                           @change="ktpSelected = $event.target.files.length > 0"
+                           class="block w-full text-xs text-slate-500 file:mr-3 file:py-1.5 file:px-3.5 file:rounded-xl file:border-0 file:text-xs file:font-bold file:bg-slate-200 file:text-slate-700 hover:file:bg-slate-300 file:cursor-pointer">
+                    <p class="text-[10px] text-emerald-600 font-bold mt-1.5 flex items-center gap-1" x-show="ktpSelected">
+                        <span>✓</span> KTP dilampirkan
+                    </p>
                 </div>
 
                 <!-- List Dynamic Optional Docs -->
@@ -265,10 +263,6 @@
                             </button>
                         </div>
                     </template>
-
-                    <div x-show="optionalDocs.length === 0" class="text-center py-5 border border-dashed border-slate-200 rounded-2xl text-xs text-slate-400">
-                        Belum ada dokumen tambahan. Klik <b>"+ Tambah Berkas Lain"</b> jika Anda memiliki sertifikat atau portofolio pendukung.
-                    </div>
                 </div>
             </div>
 
@@ -292,7 +286,7 @@
                 <!-- Status Box Warning if incomplete -->
                 <div x-show="!allMandatoryFilled" class="p-3.5 rounded-xl bg-amber-50 border border-amber-200 text-amber-900 text-xs font-semibold flex items-center gap-2">
                     <span>⚠️</span>
-                    <span>Tombol kirim akan aktif setelah Anda melampirkan <b>CV, KTP, Ijazah, dan Pas Foto Formal</b>.</span>
+                    <span>Tombol kirim akan aktif setelah Anda melampirkan <b>CV (PDF), Ijazah Terakhir, dan Pas Foto Formal</b>.</span>
                 </div>
 
                 <div x-show="allMandatoryFilled" class="p-3.5 rounded-xl bg-emerald-50 border border-emerald-200 text-emerald-900 text-xs font-semibold flex items-center gap-2">

@@ -55,12 +55,12 @@ class LamaranController extends Controller
                 ->with('error', 'Anda sudah mengajukan lamaran untuk lowongan ini.');
         }
 
-        // Validasi 4 Berkas Wajib + Berkas Tambahan
+        // Validasi 3 Berkas Wajib + KTP & Berkas Tambahan (Opsional)
         $request->validate([
             'dokumen_cv' => ['required', 'file', 'mimes:pdf', 'max:5120'],
-            'dokumen_ktp' => ['required', 'file', 'mimes:pdf,jpg,jpeg,png', 'max:3072'],
             'dokumen_ijazah' => ['required', 'file', 'mimes:pdf,jpg,jpeg,png', 'max:5120'],
             'dokumen_foto' => ['required', 'file', 'mimes:jpg,jpeg,png', 'max:3072'],
+            'dokumen_ktp' => ['nullable', 'file', 'mimes:pdf,jpg,jpeg,png', 'max:3072'],
             'catatan_pelamar' => ['nullable', 'string', 'max:1000'],
             'dokumen_tambahan.*' => ['nullable', 'file', 'mimes:pdf,jpg,jpeg,png,zip', 'max:5120'],
             'nama_dokumen_tambahan.*' => ['nullable', 'string', 'max:150'],
@@ -69,10 +69,6 @@ class LamaranController extends Controller
             'dokumen_cv.mimes' => 'Curriculum Vitae (CV) harus bertipe PDF.',
             'dokumen_cv.max' => 'Ukuran file CV maksimal 5 MB.',
 
-            'dokumen_ktp.required' => 'KTP wajib diunggah (PDF / Foto).',
-            'dokumen_ktp.mimes' => 'Format KTP harus PDF, JPG, JPEG, atau PNG.',
-            'dokumen_ktp.max' => 'Ukuran file KTP maksimal 3 MB.',
-
             'dokumen_ijazah.required' => 'Ijazah Terakhir wajib diunggah (PDF / Foto).',
             'dokumen_ijazah.mimes' => 'Format Ijazah harus PDF, JPG, JPEG, atau PNG.',
             'dokumen_ijazah.max' => 'Ukuran file Ijazah maksimal 5 MB.',
@@ -80,6 +76,9 @@ class LamaranController extends Controller
             'dokumen_foto.required' => 'Pas Foto Formal wajib diunggah.',
             'dokumen_foto.mimes' => 'Format Pas Foto harus JPG, JPEG, atau PNG.',
             'dokumen_foto.max' => 'Ukuran Pas Foto maksimal 3 MB.',
+
+            'dokumen_ktp.mimes' => 'Format KTP harus PDF, JPG, JPEG, atau PNG.',
+            'dokumen_ktp.max' => 'Ukuran file KTP maksimal 3 MB.',
         ]);
 
         DB::beginTransaction();
@@ -94,17 +93,12 @@ class LamaranController extends Controller
 
             $uploadPath = 'dokumen_lamaran/' . $user->id . '/' . $lamaran->id;
 
-            // 2. Simpan 4 Berkas Wajib
+            // 2. Simpan Berkas Wajib (CV, Ijazah, Foto)
             $mandatoryDocs = [
                 [
                     'file' => $request->file('dokumen_cv'),
                     'jenis' => 'cv',
                     'nama' => 'Curriculum Vitae (CV)',
-                ],
-                [
-                    'file' => $request->file('dokumen_ktp'),
-                    'jenis' => 'ktp',
-                    'nama' => 'Kartu Tanda Penduduk (KTP)',
                 ],
                 [
                     'file' => $request->file('dokumen_ijazah'),
@@ -119,17 +113,35 @@ class LamaranController extends Controller
             ];
 
             foreach ($mandatoryDocs as $doc) {
-                $file = $doc['file'];
-                $path = $file->store($uploadPath, 'public');
+                if ($doc['file']) {
+                    $file = $doc['file'];
+                    $path = $file->store($uploadPath, 'public');
+
+                    DokumenLamaran::create([
+                        'lamaran_id' => $lamaran->id,
+                        'jenis_dokumen' => $doc['jenis'],
+                        'nama_dokumen' => $doc['nama'],
+                        'nama_file_asli' => $file->getClientOriginalName(),
+                        'file_path' => $path,
+                        'file_size' => $file->getSize(),
+                        'mime_type' => $file->getMimeType(),
+                    ]);
+                }
+            }
+
+            // 2.1 Simpan KTP jika diunggah (Opsional)
+            if ($request->hasFile('dokumen_ktp')) {
+                $ktpFile = $request->file('dokumen_ktp');
+                $path = $ktpFile->store($uploadPath, 'public');
 
                 DokumenLamaran::create([
                     'lamaran_id' => $lamaran->id,
-                    'jenis_dokumen' => $doc['jenis'],
-                    'nama_dokumen' => $doc['nama'],
-                    'nama_file_asli' => $file->getClientOriginalName(),
+                    'jenis_dokumen' => 'ktp',
+                    'nama_dokumen' => 'Kartu Tanda Penduduk (KTP)',
+                    'nama_file_asli' => $ktpFile->getClientOriginalName(),
                     'file_path' => $path,
-                    'file_size' => $file->getSize(),
-                    'mime_type' => $file->getMimeType(),
+                    'file_size' => $ktpFile->getSize(),
+                    'mime_type' => $ktpFile->getMimeType(),
                 ]);
             }
 
