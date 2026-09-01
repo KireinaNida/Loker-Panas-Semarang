@@ -236,9 +236,17 @@
                             <a href="{{ route('lowongan.show', $l->id) }}" class="w-full py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-xl text-xs font-semibold transition text-center">
                                 Detail
                             </a>
-                            <a href="{{ route('lamaran.cepat', $l->id) }}" class="w-full py-2 flex items-center justify-center gap-1.5 bg-orange-400 hover:bg-orange-500 text-white rounded-xl text-xs font-bold transition">
-                                <svg class="icon w-3.5 h-3.5"><use href="#icon-check-circle"/></svg> Lamar Cepat
-                            </a>
+                            @auth
+                                <a href="{{ route('lamaran.create', $l->id) }}" class="w-full py-2 flex items-center justify-center gap-1.5 bg-orange-400 hover:bg-orange-500 text-white rounded-xl text-xs font-bold transition">
+                                    <svg class="icon w-3.5 h-3.5"><use href="#icon-check-circle"/></svg> Lamar
+                                </a>
+                            @else
+                                <button type="button" 
+                                        @click="$dispatch('open-auth-modal', { title: 'Lamar Pekerjaan', message: 'Silakan masuk atau daftar akun terlebih dahulu untuk mengunggah berkas dan melamar lowongan ini.' })"
+                                        class="w-full py-2 flex items-center justify-center gap-1.5 bg-orange-400 hover:bg-orange-500 text-white rounded-xl text-xs font-bold transition cursor-pointer">
+                                    <svg class="icon w-3.5 h-3.5"><use href="#icon-check-circle"/></svg> Lamar
+                                </button>
+                            @endauth
                         </div>
                     </div>
                     @empty

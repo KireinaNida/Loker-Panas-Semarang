@@ -82,10 +82,14 @@ class LowonganController extends Controller
         $totalReview = $lowongan->review->count();
 
         $isFavorited = false;
+        $existingLamaran = null;
         if (Auth::check()) {
             $isFavorited = Favorit::where('user_id', Auth::id())
                 ->where('lowongan_id', $lowongan->id)
                 ->exists();
+            $existingLamaran = \App\Models\Lamaran::where('user_id', Auth::id())
+                ->where('lowongan_id', $lowongan->id)
+                ->first();
         }
 
         $lowonganTerkait = Lowongan::publik()
@@ -94,6 +98,6 @@ class LowonganController extends Controller
             ->take(3)
             ->get();
 
-        return view('lowongan.show', compact('lowongan', 'avgRating', 'totalReview', 'isFavorited', 'lowonganTerkait'));
+        return view('lowongan.show', compact('lowongan', 'avgRating', 'totalReview', 'isFavorited', 'existingLamaran', 'lowonganTerkait'));
     }
 }

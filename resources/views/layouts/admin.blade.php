@@ -83,6 +83,19 @@
                     <a href="{{ route('admin.dashboard') }}" class="nav-link {{ request()->routeIs('admin.dashboard') ? 'active' : '' }} flex items-center gap-3 px-4 py-2.5 rounded-xl text-sm font-medium {{ request()->routeIs('admin.dashboard') ? '' : 'text-slate-500 hover:bg-slate-100 hover:text-slate-900' }} transition">
                         <svg class="icon w-[18px] h-[18px]"><use href="#icon-grid"/></svg> Dashboard
                     </a>
+                    <a href="{{ route('admin.lamaran.index') }}" class="nav-link {{ request()->routeIs('admin.lamaran.*') ? 'active' : '' }} flex items-center justify-between px-4 py-2.5 rounded-xl text-sm font-medium {{ request()->routeIs('admin.lamaran.*') ? '' : 'text-slate-500 hover:bg-slate-100 hover:text-slate-900' }} transition">
+                        <div class="flex items-center gap-3">
+                            <svg class="icon w-[18px] h-[18px]"><use href="#icon-folder"/></svg> Lamaran Masuk
+                        </div>
+                        @php
+                            $pendingLamaranCount = \App\Models\Lamaran::where('status', 'Menunggu Review')->count();
+                        @endphp
+                        @if($pendingLamaranCount > 0)
+                            <span class="px-2 py-0.5 rounded-full text-[10px] font-extrabold bg-amber-500 text-white shadow-sm">
+                                {{ $pendingLamaranCount }}
+                            </span>
+                        @endif
+                    </a>
                     <a href="{{ route('admin.lowongan.index') }}" class="nav-link {{ request()->routeIs('admin.lowongan.*') ? 'active' : '' }} flex items-center gap-3 px-4 py-2.5 rounded-xl text-sm font-medium {{ request()->routeIs('admin.lowongan.*') ? '' : 'text-slate-500 hover:bg-slate-100 hover:text-slate-900' }} transition">
                         <svg class="icon w-[18px] h-[18px]"><use href="#icon-briefcase"/></svg> Lowongan
                     </a>

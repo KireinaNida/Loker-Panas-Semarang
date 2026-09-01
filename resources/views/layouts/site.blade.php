@@ -73,9 +73,14 @@
                     <svg class="icon w-4 h-4"><use href="#icon-search"/></svg> Lowongan
                 </a>
                 @auth
-                    <a href="{{ route('favorit.index') }}" class="px-5 py-2.5 rounded-xl transition-all duration-200 flex items-center gap-1.5 {{ request()->routeIs('favorit.*') ? 'bg-orange-400 text-white shadow-md' : 'hover:text-orange-500 hover:bg-white' }}">
+                    <a href="{{ route('favorit.index') }}" class="px-4 py-2.5 rounded-xl transition-all duration-200 flex items-center gap-1.5 {{ request()->routeIs('favorit.*') ? 'bg-orange-400 text-white shadow-md' : 'hover:text-orange-500 hover:bg-white' }}">
                         <svg class="icon w-4 h-4"><use href="#icon-heart"/></svg> Favorit
                     </a>
+                    @if(auth()->user()->role !== 'admin')
+                    <a href="{{ route('lamaran.riwayat') }}" class="px-4 py-2.5 rounded-xl transition-all duration-200 flex items-center gap-1.5 {{ request()->routeIs('lamaran.*') ? 'bg-orange-400 text-white shadow-md' : 'hover:text-orange-500 hover:bg-white' }}">
+                        <svg class="icon w-4 h-4"><use href="#icon-badge-check"/></svg> Riwayat Lamaran
+                    </a>
+                    @endif
                 @endauth
             </div>
 
@@ -215,6 +220,9 @@
                         <svg class="icon w-5 h-5"><use href="#icon-zap"/></svg> Admin
                     </a>
                 @else
+                    <a href="{{ route('lamaran.riwayat') }}" class="flex flex-col items-center gap-1 text-[10px] font-bold transition-all {{ request()->routeIs('lamaran.*') ? 'text-orange-500 scale-105' : 'text-slate-400' }}">
+                        <svg class="icon w-5 h-5"><use href="#icon-badge-check"/></svg> Lamaran
+                    </a>
                     <a href="{{ route('profile.edit') }}" class="flex flex-col items-center gap-1 text-[10px] font-bold transition-all {{ request()->routeIs('profile.*') ? 'text-orange-500 scale-105' : 'text-slate-400' }}">
                         <svg class="icon w-5 h-5"><use href="#icon-user"/></svg> Profil
                     </a>
@@ -226,6 +234,49 @@
             @endauth
         </div>
     </nav>
+
+    <!-- Soft Auth Modal for Guests -->
+    <div x-data="{ 
+            open: false, 
+            actionTitle: 'Akses Fitur Khusus', 
+            actionMessage: 'Silakan masuk atau buat akun baru terlebih dahulu untuk melanjutkan.' 
+        }"
+        @open-auth-modal.window="open = true; actionTitle = $event.detail.title || 'Akses Fitur Khusus'; actionMessage = $event.detail.message || 'Silakan masuk atau buat akun baru terlebih dahulu untuk melanjutkan.'"
+        x-show="open" 
+        x-cloak 
+        class="fixed inset-0 z-50 overflow-y-auto" 
+        style="display: none;">
+        
+        <!-- Backdrop -->
+        <div class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm transition-opacity" @click="open = false"></div>
+
+        <div class="flex min-h-screen items-center justify-center p-4 text-center">
+            <div class="relative transform overflow-hidden rounded-3xl bg-white p-6 sm:p-8 text-left shadow-2xl transition-all w-full max-w-md border border-slate-200" @click.stop>
+                <!-- Close Button -->
+                <button @click="open = false" class="absolute top-5 right-5 w-8 h-8 rounded-full bg-slate-100 text-slate-400 hover:text-slate-700 hover:bg-slate-200 flex items-center justify-center transition cursor-pointer">
+                    ✕
+                </button>
+
+                <!-- Icon -->
+                <div class="w-14 h-14 bg-gradient-to-tr from-orange-400 to-amber-500 rounded-2xl flex items-center justify-center text-white text-2xl shadow-lg shadow-orange-400/30 mb-5">
+                    <svg class="icon w-7 h-7 text-white" style="stroke-width: 2.2;"><use href="#icon-zap"/></svg>
+                </div>
+
+                <h3 class="text-xl font-extrabold text-slate-900 leading-snug" x-text="actionTitle"></h3>
+                <p class="mt-2 text-xs sm:text-sm text-slate-600 leading-relaxed font-medium" x-text="actionMessage"></p>
+
+                <!-- Action Buttons -->
+                <div class="mt-6 flex flex-col sm:flex-row gap-3">
+                    <a href="{{ route('login') }}" class="flex-1 py-3 px-4 rounded-xl font-bold text-xs bg-orange-400 hover:bg-orange-500 text-white text-center shadow-md shadow-orange-400/20 transition-all active:scale-[0.98]">
+                        Masuk ke Akun
+                    </a>
+                    <a href="{{ route('register') }}" class="flex-1 py-3 px-4 rounded-xl font-bold text-xs bg-slate-100 hover:bg-slate-200 text-slate-800 text-center border border-slate-200 transition-all active:scale-[0.98]">
+                        Daftar Akun Baru
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
 
 </body>
 </html>

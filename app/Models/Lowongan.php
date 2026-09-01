@@ -63,6 +63,14 @@ class Lowongan extends Model
     }
 
     /**
+     * Relasi ke Lamaran
+     */
+    public function lamaran(): HasMany
+    {
+        return $this->hasMany(Lamaran::class);
+    }
+
+    /**
      * Scope khusus untuk memfilter lowongan yang valid tampil di publik
      * Lowongan tampil jika status = 'aktif' DAN batas_lamar >= hari ini
      */

@@ -3,6 +3,7 @@
 use App\Http\Controllers\Admin\LowonganController as AdminLowonganController;
 use App\Http\Controllers\Admin\DashboardController as AdminDashboardController;
 use App\Http\Controllers\Admin\KategoriController;
+use App\Http\Controllers\Admin\LamaranController as AdminLamaranController;
 use App\Http\Controllers\LamaranController;
 use App\Http\Controllers\LowonganController;
 use App\Http\Controllers\FavoritController;
@@ -34,9 +35,10 @@ Route::middleware('auth')->group(function () {
 
     Route::post('/review', [ReviewController::class, 'store'])->name('review.store');
 
-    Route::get('/lamar/{id}/email', [LamaranController::class, 'lamarEmail'])->name('lamaran.email');
-    Route::get('/lamar/{id}/wa', [LamaranController::class, 'lamarWa'])->name('lamaran.wa');
-    Route::get('/lamar/{id}/cepat', [LamaranController::class, 'lamarCepat'])->name('lamaran.cepat');
+    // Alur Pelamaran Kerja & Riwayat Status Pelamar (In-System)
+    Route::get('/lamar/{id}', [LamaranController::class, 'create'])->name('lamaran.create');
+    Route::post('/lamar/{id}', [LamaranController::class, 'store'])->name('lamaran.store');
+    Route::get('/riwayat-lamaran', [LamaranController::class, 'riwayat'])->name('lamaran.riwayat');
 });
 
 // Grup khusus admin
@@ -44,6 +46,12 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(fun
     Route::get('/dashboard', [AdminDashboardController::class, 'index'])->name('dashboard');
     Route::resource('kategori', KategoriController::class);
     Route::resource('lowongan', AdminLowonganController::class);
+
+    // Manajemen Lamaran Masuk
+    Route::get('/lamaran', [AdminLamaranController::class, 'index'])->name('lamaran.index');
+    Route::get('/lamaran/{id}', [AdminLamaranController::class, 'show'])->name('lamaran.show');
+    Route::put('/lamaran/{id}/forward', [AdminLamaranController::class, 'forward'])->name('lamaran.forward');
+    Route::put('/lamaran/{id}/reject', [AdminLamaranController::class, 'reject'])->name('lamaran.reject');
 
     Route::get('/favorit', [FavoritController::class, 'adminIndex'])->name('favorit.index');
     Route::delete('/favorit/{favorit}', [FavoritController::class, 'adminDestroy'])->name('favorit.destroy');

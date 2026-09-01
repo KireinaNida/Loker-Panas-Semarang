@@ -20,6 +20,10 @@ class User extends Authenticatable
      */
     protected $fillable = [
         'name',
+        'nama_panggilan',
+        'tgl_lahir',
+        'jenis_kelamin',
+        'no_telepon',
         'email',
         'password',
         'role',
@@ -46,6 +50,7 @@ class User extends Authenticatable
     {
         return [
             'email_verified_at' => 'datetime',
+            'tgl_lahir' => 'date',
             'password' => 'hashed',
         ];
     }
@@ -56,6 +61,14 @@ class User extends Authenticatable
     public function isAdmin(): bool
     {
         return $this->role === 'admin';
+    }
+
+    /**
+     * Relasi ke Lamaran
+     */
+    public function lamaran(): HasMany
+    {
+        return $this->hasMany(Lamaran::class);
     }
 
     /**

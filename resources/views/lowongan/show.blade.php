@@ -82,34 +82,39 @@
                 <div class="hidden md:flex flex-col gap-3 items-end flex-shrink-0">
                     <div class="flex flex-wrap gap-2 justify-end items-center">
                         @auth
-                            @if($lowongan->email_perusahaan)
-                            <a href="{{ route('lamaran.email', $lowongan->id) }}" class="px-5 py-3 rounded-xl bg-slate-900 hover:bg-orange-500 text-white text-xs font-bold transition shadow-sm flex items-center gap-2">
-                                <svg class="icon w-4 h-4"><use href="#icon-mail"/></svg> Lamar via Email
-                            </a>
-                            @endif
-                            @if($lowongan->wa_perusahaan)
-                            <a href="{{ route('lamaran.wa', $lowongan->id) }}" class="px-5 py-3 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold transition shadow-sm flex items-center gap-2">
-                                <svg class="icon w-4 h-4"><use href="#icon-message"/></svg> Lamar via WhatsApp
-                            </a>
-                            @endif
-
                             <form action="{{ route('favorit.store') }}" method="POST">
                                 @csrf
                                 <input type="hidden" name="lowongan_id" value="{{ $lowongan->id }}">
-                                <button type="submit" class="px-4 py-3 rounded-xl border {{ $isFavorited ? 'bg-rose-50 text-rose-600 border-rose-200 font-bold' : 'text-slate-700 border-slate-200 hover:border-orange-400 bg-white' }} text-xs font-semibold transition flex items-center gap-1.5 shadow-sm" title="{{ $isFavorited ? 'Hapus dari favorit' : 'Tambah ke favorit' }}">
+                                <button type="submit" class="px-4 py-3 rounded-xl border {{ $isFavorited ? 'bg-rose-50 text-rose-600 border-rose-200 font-bold' : 'text-slate-700 border-slate-200 hover:border-orange-400 bg-white' }} text-xs font-semibold transition flex items-center gap-1.5 shadow-sm cursor-pointer" title="{{ $isFavorited ? 'Hapus dari favorit' : 'Tambah ke favorit' }}">
                                     <svg class="icon {{ $isFavorited ? 'icon-fill' : '' }} w-4 h-4"><use href="#icon-heart"/></svg>
                                     <span>{{ $isFavorited ? 'Tersimpan' : 'Favorit' }}</span>
                                 </button>
                             </form>
+
+                            @if($existingLamaran)
+                                <a href="{{ route('lamaran.riwayat') }}" class="px-6 py-3 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold transition shadow-md flex items-center gap-2">
+                                    <span>✓ Sudah Dilamar ({{ $existingLamaran->status }})</span>
+                                </a>
+                            @else
+                                <a href="{{ route('lamaran.create', $lowongan->id) }}" class="px-6 py-3 rounded-xl bg-orange-400 hover:bg-orange-500 text-white text-xs font-bold transition shadow-lg shadow-orange-400/25 flex items-center gap-2 cursor-pointer active:scale-[0.98]">
+                                    <svg class="icon w-4 h-4"><use href="#icon-check-circle"/></svg>
+                                    <span>Lamar Sekarang</span>
+                                    <span>&rarr;</span>
+                                </a>
+                            @endif
                         @else
-                            <a href="{{ route('login') }}" class="px-4 py-3 rounded-xl border border-slate-200 text-slate-700 hover:border-orange-400 bg-white text-xs font-semibold transition flex items-center gap-1.5 shadow-sm" title="Login untuk menyimpan favorit">
+                            <button type="button" 
+                                    @click="$dispatch('open-auth-modal', { title: 'Simpan ke Favorit', message: 'Silakan masuk atau buat akun baru untuk menyimpan lowongan ini ke daftar favorit Anda.' })"
+                                    class="px-4 py-3 rounded-xl border border-slate-200 text-slate-700 hover:border-orange-400 bg-white text-xs font-semibold transition flex items-center gap-1.5 shadow-sm cursor-pointer">
                                 <svg class="icon w-4 h-4"><use href="#icon-heart"/></svg>
                                 <span>Favorit</span>
-                            </a>
-                            <a href="{{ route('login') }}" class="px-6 py-3 rounded-xl bg-orange-400 hover:bg-orange-500 text-white text-xs font-bold transition shadow-lg shadow-orange-400/20 flex items-center gap-2">
-                                <span>Login untuk Melamar</span>
+                            </button>
+                            <button type="button" 
+                                    @click="$dispatch('open-auth-modal', { title: 'Lamar Pekerjaan', message: 'Silakan masuk atau daftar akun terlebih dahulu untuk mengunggah berkas dan melamar lowongan ini.' })"
+                                    class="px-6 py-3 rounded-xl bg-orange-400 hover:bg-orange-500 text-white text-xs font-bold transition shadow-lg shadow-orange-400/20 flex items-center gap-2 cursor-pointer active:scale-[0.98]">
+                                <span>Lamar Sekarang</span>
                                 <span>&rarr;</span>
-                            </a>
+                            </button>
                         @endauth
                     </div>
                 </div>
@@ -190,7 +195,11 @@
             @else
             <div class="p-4 bg-slate-100 rounded-2xl border border-slate-200 text-xs text-slate-600 mb-6 flex items-center justify-between">
                 <span>Ingin memberi ulasan? Silakan masuk ke akun kamu terlebih dahulu.</span>
-                <a href="{{ route('login') }}" class="font-bold text-orange-500 hover:underline">Login Sekarang &rarr;</a>
+                <button type="button" 
+                        @click="$dispatch('open-auth-modal', { title: 'Tulis Ulasan & Rating', message: 'Silakan masuk atau buat akun baru untuk memberikan ulasan dan rating pada lowongan kerja ini.' })"
+                        class="font-bold text-orange-500 hover:underline cursor-pointer">
+                    Masuk Sekarang &rarr;
+                </button>
             </div>
             @endauth
 
@@ -245,15 +254,15 @@
     <!-- Mobile Sticky CTA Bar -->
     @auth
     <div class="md:hidden fixed bottom-0 left-0 right-0 z-40 bg-white/95 backdrop-blur-md border-t border-slate-200 px-4 py-3 flex items-center gap-2 shadow-lg">
-        @if($lowongan->email_perusahaan)
-        <a href="{{ route('lamaran.email', $lowongan->id) }}" class="flex-1 flex items-center justify-center gap-1.5 py-2.5 rounded-xl bg-slate-900 text-white text-xs font-bold">
-            <svg class="icon w-3.5 h-3.5"><use href="#icon-mail"/></svg> Email
-        </a>
-        @endif
-        @if($lowongan->wa_perusahaan)
-        <a href="{{ route('lamaran.wa', $lowongan->id) }}" class="flex-1 flex items-center justify-center gap-1.5 py-2.5 rounded-xl bg-emerald-600 text-white text-xs font-bold">
-            <svg class="icon w-3.5 h-3.5"><use href="#icon-message"/></svg> WA
-        </a>
+        @if($existingLamaran)
+            <a href="{{ route('lamaran.riwayat') }}" class="flex-1 text-center py-3 rounded-xl bg-emerald-600 text-white text-xs font-bold shadow-md flex items-center justify-center gap-1.5">
+                <span>✓ Sudah Dilamar ({{ $existingLamaran->status }})</span>
+            </a>
+        @else
+            <a href="{{ route('lamaran.create', $lowongan->id) }}" class="flex-1 text-center py-3 rounded-xl bg-orange-400 hover:bg-orange-500 text-white text-xs font-bold shadow-md flex items-center justify-center gap-1.5">
+                <svg class="icon w-4 h-4"><use href="#icon-check-circle"/></svg>
+                <span>Lamar Sekarang</span>
+            </a>
         @endif
         <form action="{{ route('favorit.store') }}" method="POST" class="flex-shrink-0">
             @csrf
@@ -265,10 +274,16 @@
     </div>
     @else
     <div class="md:hidden fixed bottom-0 left-0 right-0 z-40 bg-white/95 backdrop-blur-md border-t border-slate-200 px-4 py-3 flex items-center gap-2 shadow-lg">
-        <a href="{{ route('login') }}" class="flex-1 text-center py-3 rounded-xl bg-orange-400 text-white text-xs font-bold shadow-md">Login untuk Melamar</a>
-        <a href="{{ route('login') }}" class="px-3.5 py-3 rounded-xl border border-slate-200 bg-slate-50 text-slate-700 text-xs font-bold flex items-center">
+        <button type="button" 
+                @click="$dispatch('open-auth-modal', { title: 'Lamar Pekerjaan', message: 'Silakan masuk atau daftar akun terlebih dahulu untuk mengunggah berkas dan melamar lowongan ini.' })"
+                class="flex-1 text-center py-3 rounded-xl bg-orange-400 text-white text-xs font-bold shadow-md">
+            Lamar Sekarang
+        </button>
+        <button type="button" 
+                @click="$dispatch('open-auth-modal', { title: 'Simpan ke Favorit', message: 'Silakan masuk atau buat akun baru untuk menyimpan lowongan ini ke daftar favorit Anda.' })"
+                class="px-3.5 py-3 rounded-xl border border-slate-200 bg-slate-50 text-slate-700 text-xs font-bold flex items-center">
             <svg class="icon w-4 h-4"><use href="#icon-heart"/></svg>
-        </a>
+        </button>
     </div>
     @endauth
 
