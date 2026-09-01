@@ -18,6 +18,10 @@ class UserSeeder extends Seeder
             ['email' => 'admin@lokerkita.com'],
             [
                 'name' => 'Administrator LokerKita',
+                'nama_panggilan' => 'Admin',
+                'tgl_lahir' => '1998-01-01',
+                'jenis_kelamin' => 'Laki-laki',
+                'no_telepon' => '081234567890',
                 'password' => Hash::make('password123'),
                 'role' => 'admin',
             ]
@@ -27,7 +31,11 @@ class UserSeeder extends Seeder
         User::firstOrCreate(
             ['email' => 'user@lokerkita.com'],
             [
-                'name' => 'User Pencari Kerja',
+                'name' => 'Budi Santoso',
+                'nama_panggilan' => 'Budi',
+                'tgl_lahir' => '2000-05-15',
+                'jenis_kelamin' => 'Laki-laki',
+                'no_telepon' => '081298765432',
                 'password' => Hash::make('password123'),
                 'role' => 'user',
             ]
